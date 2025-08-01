@@ -5,6 +5,7 @@
 
 - TODO
   - [ ] level design
+  - [ ] light mode lol
   - [ ] spikes
   - [ ] show multiple levels at once
   - [ ] timeline controls
