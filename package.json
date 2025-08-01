@@ -16,8 +16,7 @@
     "@dimforge/rapier2d": "catalog:frontend",
     "@vueuse/core": "catalog:frontend",
     "vite-plugin-wasm": "catalog:build",
-    "vue": "catalog:frontend",
-    "vue-router": "catalog:frontend"
+    "vue": "catalog:frontend"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
@@ -38,7 +37,6 @@
     "unplugin-auto-import": "catalog:build",
     "unplugin-vue-components": "catalog:build",
     "unplugin-vue-macros": "catalog:build",
-    "unplugin-vue-router": "catalog:build",
     "vite": "catalog:build",
     "vitest": "catalog:dev",
     "vue-tsc": "catalog:dev"

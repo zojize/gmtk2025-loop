@@ -101,6 +101,12 @@ function removeSelf() {
     :width="data.width"
     :height="4.9"
     class="cursor-grab"
+    :class="{
+      'opacity-100': data.active,
+      'opacity-50': !data.active,
+    }"
+    stroke="white"
+    stroke-width="0.1"
     fill="gray"
     opacity="0.5"
     rx="1"

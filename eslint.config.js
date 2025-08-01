@@ -8,6 +8,7 @@ export default antfu(
     vue: {
       overrides: {
         'vue/v-bind-style': ['error', 'shorthand', { sameNameShorthand: 'always' }],
+        'vue/no-restricted-v-bind': 'off',
       },
     },
   },

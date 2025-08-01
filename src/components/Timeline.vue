@@ -3,14 +3,19 @@ const { duration } = defineProps<{
   duration: number
 }>()
 
-const start = performance.now()
+const paused = ref(true)
 const progress = ref(0)
-const diff = ref(0)
-const sign = computed(() => Math.floor(diff.value / duration) % 2 === 0 ? 1 : -1)
+const accumulated = ref(0)
+const sign = computed(() => Math.floor(accumulated.value / duration) % 2 === 0 ? 1 : -1)
+let last = performance.now()
 useRafFn(() => {
-  diff.value = performance.now() - start
-  const offset = sign.value > 0 ? 0 : 100
-  progress.value = sign.value * (diff.value % duration) / duration * 100 + offset
+  if (!paused.value) {
+    const now = performance.now()
+    accumulated.value += now - (last ?? now)
+    const offset = sign.value > 0 ? 0 : 100
+    progress.value = sign.value * (accumulated.value % duration) / duration * 100 + offset
+  }
+  last = performance.now()
 })
 
 const timelineEl = useTemplateRef('timelineEl')
@@ -26,7 +31,7 @@ const preview = ref<{
 type Rect = Omit<DOMRect, 'top' | 'right' | 'bottom' | 'left' | 'toJSON'>
 
 const minWidth = ref(-1)
-const timelineItems = ref<NonNullable<typeof preview.value>[]>([])
+const timelineItems = ref<(NonNullable<typeof preview.value> & { active: boolean })[]>([])
 function onDrag(dragBounding: Rect, icon: string) {
   if (rectRectCollision(dragBounding, {
     x: timelineBounding.x.value,
@@ -66,7 +71,7 @@ function onDrag(dragBounding: Rect, icon: string) {
 
 function onDragEnd() {
   if (preview.value) {
-    timelineItems.value.push(preview.value)
+    timelineItems.value.push({ ...preview.value, active: false })
   }
   preview.value = undefined
 }
@@ -81,7 +86,6 @@ function rectRectCollision(rect1: Rect, rect2: Rect): boolean {
 }
 
 const timelineContext = {
-  diff,
   sign,
   progress,
   timelineBounding,
@@ -92,8 +96,15 @@ export type TimelineContext = typeof timelineContext
 
 const keys = computed(() => {
   const currentX = progress.value
+  if (paused.value) {
+    timelineItems.value.forEach((item) => {
+      item.active = false
+    })
+    return { up: false, left: false, right: false }
+  }
   return timelineItems.value.reduce((acc, item) => {
     if (item.x <= currentX && item.x + item.width >= currentX) {
+      item.active = true
       let type = item.type
       if (sign.value < 0) {
         type = ({
@@ -104,19 +115,49 @@ const keys = computed(() => {
       }
       acc[type] = true
     }
+    else {
+      item.active = false
+    }
     return acc
   }, { up: false, left: false, right: false })
 })
 
+function play() {
+  paused.value = false
+}
+
+function pause() {
+  paused.value = true
+}
+
+function restart() {
+  accumulated.value = 0
+  progress.value = 0
+}
+
 defineExpose({
   timelineContext,
   keys,
+  play,
+  pause,
+  restart,
 })
 </script>
 
 <template>
-  <div class="mt-2 h-48">
-    <svg ref="timelineEl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" class="b b-blue h-full w-full">
+  <div class="flex flex-row gap-2 justify-end">
+    <button class="icon-btn" @click="play">
+      <div class="i-carbon-play-filled-alt" />
+    </button>
+    <button class="icon-btn" :disabled="paused" @click="pause">
+      <div class="i-carbon-pause-filled" />
+    </button>
+    <button class="icon-btn" @click="restart">
+      <div class="i-carbon-restart" />
+    </button>
+  </div>
+  <div class="mt-2 p-2 b b-blue h-48">
+    <svg ref="timelineEl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" class="h-full w-full">
       <symbol id="carbon-arrow-left" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="m14 26l1.41-1.41L7.83 17H28v-2H7.83l7.58-7.59L14 6L4 16z" /></symbol>
       <symbol id="carbon-arrow-up" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="M16 4L6 14l1.41 1.41L15 7.83V28h2V7.83l7.59 7.58L26 14z" /></symbol>
       <symbol id="carbon-arrow-right" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="m18 6l-1.43 1.393L24.15 15H4v2h20.15l-7.58 7.573L18 26l10-10z" /></symbol>
