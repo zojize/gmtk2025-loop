@@ -12,9 +12,6 @@ declare module 'vue' {
     Key: typeof import('./src/components/Key.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    TheCounter: typeof import('./src/components/TheCounter.vue')['default']
-    TheFooter: typeof import('./src/components/TheFooter.vue')['default']
-    TheInput: typeof import('./src/components/TheInput.vue')['default']
     Timeline: typeof import('./src/components/Timeline.vue')['default']
     TimelineItem: typeof import('./src/components/TimelineItem.vue')['default']
   }

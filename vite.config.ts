@@ -17,6 +17,9 @@ export default defineConfig({
       '~/': `${path.resolve(__dirname, 'src')}/`,
     },
   },
+  build: {
+    target: 'esnext', // Enable top-level await support
+  },
   plugins: [
     // https://github.com/posva/unplugin-vue-router
     VueRouter(),
