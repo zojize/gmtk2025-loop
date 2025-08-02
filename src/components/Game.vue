@@ -8,12 +8,12 @@ const searchParams = new URLSearchParams(window.location.search)
 const debug = searchParams.get('debug') != null
 const currentLevel = ref(debug && searchParams.get('level') ? +searchParams.get('level')! : 1)
 const collectedGoals = ref(0)
-// const spikeDirections = {
-//   up: 'rotate(0deg)',
-//   right: 'rotate(90deg)',
-//   down: 'rotate(180deg)',
-//   left: 'rotate(270deg)',
-// }
+const spikeDirections = {
+  up: 'rotate(0deg)',
+  right: 'rotate(90deg)',
+  down: 'rotate(180deg)',
+  left: 'rotate(270deg)',
+}
 const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
   {
     characterStartPos: { x: -8, y: 1.25 },
@@ -50,6 +50,9 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
       { x: 0, y: 6, width: 1, height: 3 },
       { x: 2, y: 8, width: 3, height: 1 },
     ],
+    spikes: [
+      { x: 0, y: 1, rotation: spikeDirections.up },
+    ],
     goalPos: { x: 8, y: 1.25 },
   },
   {
@@ -58,6 +61,9 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
       { x: -8, y: 8, width: 2, height: 2 },
       { x: -1, y: 2, width: 2, height: 2 },
       { x: 8, y: 8, width: 2, height: 1 },
+    ],
+    spikes: [
+      { x: -8, y: 1, rotation: spikeDirections.up },
     ],
     goalPos: { x: 8, y: 10 },
   },
