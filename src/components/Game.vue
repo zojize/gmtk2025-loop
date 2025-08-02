@@ -74,7 +74,7 @@ function resetLevels() {
 </script>
 
 <template>
-  <div class="flex flex-row flex-wrap justify-center relative children:flex-basis-[33%]">
+  <div class="m-auto grid grid-cols-3 grid-rows-3 h-[100cqmin] aspect-ratio-square justify-center children:h-fit">
     <Level
       v-for="({ characterStartPos, goalPos, obstacles, spikes }, key) in levelsData.slice(0, currentLevel)"
       :key
