@@ -79,7 +79,7 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
       { x: 1, y: 4, width: 3, height: 1 },
       { x: -1, y: 10, width: 3, height: 1 },
     ],
-    goalPos: { x: -1, y: 14.5 },
+    goalPos: { x: -1, y: 14 },
   },
   {
     characterStartPos: { x: 9, y: 1.25 },
@@ -90,7 +90,7 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
       { x: 6, y: 4, width: 2, height: 1 },
       { x: 4, y: 16, width: 1, height: 5 },
     ],
-    goalPos: { x: -1, y: 14.5 },
+    goalPos: { x: -8, y: 14 },
   },
 ]
 
