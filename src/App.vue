@@ -1,6 +1,5 @@
 <template>
   <nav class="text-xl mr-2 mt-2 inline-flex gap-2 right-0 absolute z-10">
-    <span class="dark:hidden">I only made dark mode ui for now... please switch if you are in light mode </span>
     <button class="icon-btn" @click="toggleDark()">
       <div class="i-carbon-sun dark:i-carbon-moon" />
     </button>

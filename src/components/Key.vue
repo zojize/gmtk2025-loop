@@ -37,18 +37,18 @@ function dragStart(event: PointerEvent) {
 
 <template>
   <div
-    class="rounded-xl dark:bg-white/50 dark:hover:bg-white/80"
+    class="rounded-xl bg-gray-200 dark:bg-white/50 hover:bg-gray-300 dark:hover:bg-white/80"
     :class="dragging && 'opacity-20'"
     @pointerdown="dragStart"
   >
-    <div class="text-white h-12 w-12 cursor-grab" :class="icon" />
+    <div class="text-gray-700 h-12 w-12 cursor-grab dark:text-white" :class="icon" />
   </div>
   <div
     v-if="dragging"
     ref="dragEl"
-    class="rounded-xl fixed touch-none dark:bg-white/50 dark:hover:bg-white/80"
+    class="rounded-xl bg-gray-200 fixed touch-none dark:bg-white/50 hover:bg-gray-300 dark:hover:bg-white/80"
     :style="{ left: `${x - offset.x}px`, top: `${y - offset.y}px` }"
   >
-    <div class="text-white h-12 w-12 cursor-grab" :class="icon" />
+    <div class="text-gray-700 h-12 w-12 cursor-grab dark:text-white" :class="icon" />
   </div>
 </template>

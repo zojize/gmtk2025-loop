@@ -50,7 +50,7 @@ const rightWallColliderDesc = RAPIER.ColliderDesc.cuboid(0.1, 10.0)
 obstacleColliders.value.add(world.createCollider(rightWallColliderDesc, rightWall))
 
 // Create Ceiling.
-const ceilingDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(0.0, 20.0)
+const ceilingDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(0.0, 19.9)
 const ceiling = world.createRigidBody(ceilingDesc)
 const ceilingColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1)
 obstacleColliders.value.add(world.createCollider(ceilingColliderDesc, ceiling))
@@ -237,8 +237,8 @@ function gameLoop() {
     )) {
       gameRunning.value = false
       animateGoal()
-      goalCollected.value = true
       setTimeout(() => {
+        goalCollected.value = true
         world.removeCollider(goalCollider, true)
         emit('goal')
       }, ANIMATION_DURATION - 100)
@@ -409,8 +409,7 @@ defineExpose({
       v-if="showRedBackground"
       :width="WIDTH"
       :height="HEIGHT"
-      fill="rgba(255, 0, 0, 0.3)"
-      class="animate-pulse animate-duration-500 animate-ease-out"
+      class="fill-red-500/30 animate-pulse animate-duration-500 animate-ease-out dark:fill-red-400/40"
     />
 
     <!-- Goal as green ball -->
@@ -422,7 +421,7 @@ defineExpose({
       :transform-origin="`${goal.x} ${goal.y}`"
       :r="goal.radius"
       opacity="1"
-      fill="limegreen"
+      class="fill-green-500 dark:fill-green-400"
     />
 
     <!-- Spikes as red triangles -->
@@ -432,7 +431,7 @@ defineExpose({
       :points="`${spike.x - ZOOM},${spike.y + ZOOM} ${spike.x + ZOOM},${spike.y + ZOOM} ${spike.x},${spike.y - ZOOM}`"
       :style="{ transform: spike.rotation }"
       :transform-origin="`${spike.x} ${spike.y}`"
-      fill="red"
+      class="fill-red-600 dark:fill-red-500"
     />
 
     <!-- Cuboid colliders (walls, ground, ceiling, cubes) -->
@@ -444,7 +443,7 @@ defineExpose({
       :width="rect.width"
       :height="rect.height"
       :transform="`rotate(${rect.rotation} ${rect.x + rect.width / 2} ${rect.y + rect.height / 2})`"
-      fill="gray"
+      class="fill-gray-600 dark:fill-gray-400"
     />
 
     <!-- Player character as blue capsule -->
@@ -456,7 +455,7 @@ defineExpose({
       :height="player.height"
       :rx="player.width / 2"
       :ry="player.width / 2"
-      fill="skyblue"
+      class="fill-blue-400 dark:fill-blue-300"
     />
 
   </svg>

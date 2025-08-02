@@ -7,7 +7,7 @@
 
 - TODO
   - [ ] level design (WIP)
-  - [ ] light mode lol
+  - [x] light mode lol
   - [x] spikes
   - [x] show multiple levels at once
   - [x] timeline controls

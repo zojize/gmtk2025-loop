@@ -100,14 +100,13 @@ function removeSelf() {
     :y="data.track === 0 ? 0 : 5 + 0.05"
     :width="data.width"
     :height="4.9"
-    class="cursor-grab"
+    class="cursor-grab fill-gray-300 dark:fill-gray-600"
     :class="{
       'opacity-100': data.active,
       'opacity-50': !data.active,
     }"
-    stroke="white"
+    stroke="currentColor"
     stroke-width="0.1"
-    fill="gray"
     opacity="0.5"
     rx="1"
     ry="1"

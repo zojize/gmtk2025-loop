@@ -157,20 +157,20 @@ defineExpose({
       <div class="i-carbon-restart" />
     </button>
   </div>
-  <div class="mt-2 p-2 b b-blue max-h-48">
+  <div class="mt-2 p-2 border border-blue-400 bg-white max-h-48 dark:border-blue-600 dark:bg-gray-900">
     <svg ref="timelineEl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" class="h-full w-full">
       <symbol id="carbon-arrow-left" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="m14 26l1.41-1.41L7.83 17H28v-2H7.83l7.58-7.59L14 6L4 16z" /></symbol>
       <symbol id="carbon-arrow-up" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="M16 4L6 14l1.41 1.41L15 7.83V28h2V7.83l7.59 7.58L26 14z" /></symbol>
       <symbol id="carbon-arrow-right" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="m18 6l-1.43 1.393L24.15 15H4v2h20.15l-7.58 7.573L18 26l10-10z" /></symbol>
-      <line x1="-1000" y1="2.5" x2="1000" y2="2.5" stroke="gray" stroke-width="0.125" opacity="0.25" />
-      <line x1="-1000" y1="7.5" x2="1000" y2="7.5" stroke="gray" stroke-width="0.125" opacity="0.25" />
+      <line x1="-1000" y1="2.5" x2="1000" y2="2.5" stroke="currentColor" stroke-width="0.125" opacity="0.25" />
+      <line x1="-1000" y1="7.5" x2="1000" y2="7.5" stroke="currentColor" stroke-width="0.125" opacity="0.25" />
       <template v-if="preview">
         <rect
           :x="preview.x"
           :y="preview.track === 0 ? 0 : 5"
           :width="preview.width"
           :height="5"
-          fill="gray"
+          class="fill-gray-400 dark:fill-gray-600"
           rx="1"
           ry="1"
         />
@@ -182,7 +182,7 @@ defineExpose({
         :data="item"
         :context="timelineContext"
       />
-      <line :x1="progress" y1="-100" :x2="progress" y2="100" stroke="white" stroke-width="0.25" opacity="0.5" />
+      <line :x1="progress" y1="-100" :x2="progress" y2="100" stroke="currentColor" stroke-width="0.25" opacity="0.8" />
     </svg>
   </div>
   <div class="p-2 flex flex-row gap-2 justify-center">
