@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 const { data, context } = props
 
-function onMouseDownLeft() {
+function onPointerDownLeft() {
   const initialX = data.x
   const initialWidth = data.width
   const minX = context.timelineItems.value
@@ -20,7 +20,7 @@ function onMouseDownLeft() {
       }
       return acc
     }, 0)
-  const stop = useEventListener('mousemove', (e: MouseEvent) => {
+  const stop = useEventListener('pointermove', (e) => {
     const timelineBounding = context.timelineBounding
     const xBefore = data.x
     data.x = Math.max(minX, Math.min(100, (e.clientX - timelineBounding.x.value) / timelineBounding.width.value * 100))
@@ -30,12 +30,12 @@ function onMouseDownLeft() {
       data.x = xBefore
     }
   })
-  useEventListener('mouseup', () => {
+  useEventListener('pointerup', () => {
     stop()
   }, { once: true })
 }
 
-function onMouseDownRight() {
+function onPointerDownRight() {
   const maxWidth = context.timelineItems.value
     .reduce((acc, item) => {
       if (item.track === data.track) {
@@ -46,16 +46,16 @@ function onMouseDownRight() {
       }
       return acc
     }, 100) - data.x
-  const stop = useEventListener('mousemove', (e: MouseEvent) => {
+  const stop = useEventListener('pointermove', (e) => {
     const timelineBounding = context.timelineBounding
     data.width = Math.max(context.minWidth.value, Math.min(maxWidth, (e.clientX - timelineBounding.x.value) / timelineBounding.width.value * 100 - data.x))
   })
-  useEventListener('mouseup', () => {
+  useEventListener('pointerup', () => {
     stop()
   }, { once: true })
 }
 
-function onGrab(event: MouseEvent) {
+function onGrab(event: PointerEvent) {
   const timelineBounding = context.timelineBounding
   const offsetX = (event.clientX - (timelineBounding.x.value + (data.x / 100) * timelineBounding.width.value)) / timelineBounding.width.value * 100
   const initialWidth = data.width
@@ -71,7 +71,7 @@ function onGrab(event: MouseEvent) {
       return false
     })
   }
-  const stop = useEventListener('mousemove', (e: MouseEvent) => {
+  const stop = useEventListener('pointermove', (e) => {
     const xBefore = data.x
     const trackBefore = data.track
     data.x = Math.max(0, Math.min(100 - initialWidth, (e.clientX - timelineBounding.x.value) / timelineBounding.width.value * 100 - offsetX))
@@ -81,7 +81,7 @@ function onGrab(event: MouseEvent) {
       data.track = trackBefore
     }
   })
-  useEventListener('mouseup', () => {
+  useEventListener('pointerup', () => {
     stop()
   }, { once: true })
 }
@@ -111,7 +111,7 @@ function removeSelf() {
     opacity="0.5"
     rx="1"
     ry="1"
-    @mousedown="onGrab"
+    @pointerdown="onGrab"
     @dblclick="removeSelf"
   />
   <use
@@ -123,7 +123,7 @@ function removeSelf() {
     :height="5"
     :transform-origin="`${data.x + data.width / 2} ${data.track === 0 ? 2.5 : 7.5}`"
     :style="{ transform: context.sign.value > 0 ? 'scaleX(1)' : 'scaleX(-1)' }"
-    @mousedown="onGrab"
+    @pointerdown="onGrab"
     @dblclick="removeSelf"
   />
   <rect
@@ -133,7 +133,7 @@ function removeSelf() {
     :height="5"
     class="cursor-w-resize"
     fill="transparent"
-    @mousedown="onMouseDownLeft"
+    @pointerdown="onPointerDownLeft"
   />
   <rect
     :x="data.x + data.width - 0.5"
@@ -142,6 +142,6 @@ function removeSelf() {
     :height="5"
     class="cursor-e-resize"
     fill="transparent"
-    @mousedown="onMouseDownRight"
+    @pointerdown="onPointerDownRight"
   />
 </template>

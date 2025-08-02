@@ -10,16 +10,16 @@ const emit = defineEmits<{
 
 const dragging = ref(false)
 
-const { x, y } = useMouse()
+const { x, y } = usePointer()
 const dragEl = useTemplateRef('dragEl')
 const bounding = useElementBounding(dragEl)
 
 const offset = reactive({ x: 0, y: 0 })
-function dragStart(event: MouseEvent) {
+function dragStart(event: PointerEvent) {
   dragging.value = true
   offset.x = event.offsetX
   offset.y = event.offsetY
-  const stop = useEventListener('mousemove', () => {
+  const stop = useEventListener('pointermove', () => {
     emit('drag', {
       x: bounding.x.value,
       y: bounding.y.value,
@@ -27,7 +27,7 @@ function dragStart(event: MouseEvent) {
       height: bounding.height.value,
     }, icon)
   })
-  useEventListener('mouseup', () => {
+  useEventListener('pointerup', () => {
     dragging.value = false
     stop()
     emit('dragend')
@@ -39,7 +39,7 @@ function dragStart(event: MouseEvent) {
   <div
     class="rounded-xl dark:bg-white/50 dark:hover:bg-white/80"
     :class="dragging && 'opacity-20'"
-    @mousedown="dragStart"
+    @pointerdown="dragStart"
   >
     <div class="text-white h-12 w-12 cursor-grab" :class="icon" />
   </div>
