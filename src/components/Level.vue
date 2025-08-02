@@ -29,31 +29,32 @@ const gravity = new RAPIER.Vector2(0.0, -9.81)
 const world = new RAPIER.World(gravity)
 
 const obstacleColliders = ref(new WeakSet<RAPIER.Collider>())
+const wallColliders = ref(new WeakSet<RAPIER.Collider>())
 const spikeColliders = ref(new WeakSet<RAPIER.Collider>())
 const spikeData = ref(new Map<RAPIER.Collider, { rotation: string }>())
 // Create Ground.
 const bodyDesc = RAPIER.RigidBodyDesc.fixed()
 const body = world.createRigidBody(bodyDesc)
 const colliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1)
-obstacleColliders.value.add(world.createCollider(colliderDesc, body))
+wallColliders.value.add(world.createCollider(colliderDesc, body))
 
 // Create Left Wall.
 const leftWallDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(-9.9, 10.0)
 const leftWall = world.createRigidBody(leftWallDesc)
 const leftWallColliderDesc = RAPIER.ColliderDesc.cuboid(0.1, 10.0)
-obstacleColliders.value.add(world.createCollider(leftWallColliderDesc, leftWall))
+wallColliders.value.add(world.createCollider(leftWallColliderDesc, leftWall))
 
 // Create Right Wall.
 const rightWallDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(9.9, 10.0)
 const rightWall = world.createRigidBody(rightWallDesc)
 const rightWallColliderDesc = RAPIER.ColliderDesc.cuboid(0.1, 10.0)
-obstacleColliders.value.add(world.createCollider(rightWallColliderDesc, rightWall))
+wallColliders.value.add(world.createCollider(rightWallColliderDesc, rightWall))
 
 // Create Ceiling.
 const ceilingDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(0.0, 19.9)
 const ceiling = world.createRigidBody(ceilingDesc)
 const ceilingColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1)
-obstacleColliders.value.add(world.createCollider(ceilingColliderDesc, ceiling))
+wallColliders.value.add(world.createCollider(ceilingColliderDesc, ceiling))
 
 for (const obstacle of props.obstacles) {
   const obstacleDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(obstacle.x, obstacle.y)
@@ -108,6 +109,7 @@ const speed = 0.15
 const jumpForce = 0.4
 const gravityForce = 0.015
 const velocity = { x: 0.0, y: 0.0 }
+const inputEnabled = ref(true)
 
 function updateCharacter() {
   // Apply gravity when not grounded
@@ -138,6 +140,9 @@ function updateCharacter() {
 
 if (new URLSearchParams(window.location.search).get('debug') != null) {
   useEventListener('keydown', (event: KeyboardEvent) => {
+    if (!inputEnabled.value)
+      return
+
     if (event.key === 'ArrowLeft') {
       event.preventDefault()
       velocity.x = -speed
@@ -155,6 +160,9 @@ if (new URLSearchParams(window.location.search).get('debug') != null) {
   })
 
   useEventListener('keyup', (event: KeyboardEvent) => {
+    if (!inputEnabled.value)
+      return
+
     if (event.key === 'ArrowLeft')
       velocity.x = 0.0
     if (event.key === 'ArrowRight')
@@ -165,22 +173,22 @@ if (new URLSearchParams(window.location.search).get('debug') != null) {
 until(() => props.timeline)
   .toBeTruthy()
   .then((timeline) => {
-    whenever(() => timeline.keys.left, () => {
+    whenever(() => timeline.keys.left && inputEnabled.value, () => {
       velocity.x = -speed
     })
-    whenever(() => !timeline.keys.left, () => {
+    whenever(() => !timeline.keys.left || !inputEnabled.value, () => {
       if (velocity.x < 0)
         velocity.x = 0.0
     })
 
-    whenever(() => timeline.keys.right, () => {
+    whenever(() => timeline.keys.right && inputEnabled.value, () => {
       velocity.x = speed
     })
-    whenever(() => !timeline.keys.right, () => {
+    whenever(() => !timeline.keys.right || !inputEnabled.value, () => {
       if (velocity.x > 0)
         velocity.x = 0.0
     })
-    whenever(() => timeline.keys.up, () => {
+    whenever(() => timeline.keys.up && inputEnabled.value, () => {
       if (characterController.computedGrounded()) {
         velocity.y = jumpForce
       }
@@ -207,10 +215,6 @@ const { start: scheduleNextFrame } = useTimeoutFn(() => {
 }, nextFrameDelay, { immediate: false })
 
 function gameLoop() {
-  if (!gameRunning.value) {
-    return // Stop the game loop if the game is not running
-  }
-
   const currentTime = performance.now()
 
   if (lastFrameTime === 0) {
@@ -231,11 +235,11 @@ function gameLoop() {
     const collider1 = world.getCollider(handle1)
     const collider2 = world.getCollider(handle2)
 
-    if (started && (
+    if (started && !showRedBackground.value && (
       (collider1 === characterCollider && collider2 === goalCollider)
       || (collider1 === goalCollider && collider2 === characterCollider)
     )) {
-      gameRunning.value = false
+      inputEnabled.value = false
       animateGoal()
       setTimeout(() => {
         goalCollected.value = true
@@ -249,7 +253,7 @@ function gameLoop() {
       (collider1 === characterCollider && spikeColliders.value.has(collider2))
       || (collider2 === characterCollider && spikeColliders.value.has(collider1))
     )) {
-      gameRunning.value = false
+      inputEnabled.value = false
       // Flash red background
       showRedBackground.value = true
       setTimeout(() => {
@@ -370,6 +374,7 @@ function restart() {
 
   // Reset game state
   gameRunning.value = true
+  inputEnabled.value = true
   showRedBackground.value = false
   goalCollected.value = false
 
@@ -402,6 +407,7 @@ defineExpose({
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
+    class="b-2 b-gray-600 dark:b-gray-400"
     :viewBox="`0 0 ${WIDTH} ${HEIGHT}`"
   >
     <!-- Red background flash when hitting spike -->

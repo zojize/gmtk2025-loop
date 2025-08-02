@@ -47,6 +47,38 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
     ],
     goalPos: { x: 8, y: 1.25 },
   },
+  {
+    characterStartPos: { x: -8, y: 1.25 },
+    spikes: [
+      { x: -5, y: 1, rotation: spikeDirections.up },
+      { x: 5, y: 1, rotation: spikeDirections.up },
+    ],
+    goalPos: { x: 8, y: 1.25 },
+  },
+  {
+    characterStartPos: { x: -8, y: 1.25 },
+    spikes: [
+      { x: -5, y: 1, rotation: spikeDirections.up },
+      { x: 5, y: 1, rotation: spikeDirections.up },
+    ],
+    goalPos: { x: 8, y: 1.25 },
+  },
+  {
+    characterStartPos: { x: -8, y: 1.25 },
+    spikes: [
+      { x: -5, y: 1, rotation: spikeDirections.up },
+      { x: 5, y: 1, rotation: spikeDirections.up },
+    ],
+    goalPos: { x: 8, y: 1.25 },
+  },
+  {
+    characterStartPos: { x: -8, y: 1.25 },
+    spikes: [
+      { x: -5, y: 1, rotation: spikeDirections.up },
+      { x: 5, y: 1, rotation: spikeDirections.up },
+    ],
+    goalPos: { x: 8, y: 1.25 },
+  },
 ]
 
 const levels = useTemplateRef('levels')
@@ -71,10 +103,24 @@ function resetLevels() {
     level!.restart()
   })
 }
+
+const levelsClass = [
+  '',
+  '',
+  'grid grid-cols-2 grid-rows-1',
+  'grid grid-cols-3 grid-rows-1',
+  'grid grid-cols-2 grid-rows-2',
+  // fixme: unocss should be able to handle nth-[-n+3]:children:(self-end col-span-2)
+  'grid grid-cols-6 grid-rows-2 children:col-span-2 nth-1:children:self-end nth-2:children:self-end nth-3:children:self-end nth-4:children:(self-start col-[2/span_2]) nth-5:children:self-start',
+  'grid grid-cols-3 grid-rows-2 nth-1:children:self-end nth-2:children:self-end nth-3:children:self-end nth-4:children:self-start nth-5:children:self-start nth-6:children:self-start',
+  'grid grid-cols-3 grid-rows-3 nth-7:children:col-2',
+  'grid grid-cols-6 grid-rows-3 children:col-span-2 !nth-7:children:col-[2/span_2]',
+  'grid grid-cols-3 grid-rows-3',
+]
 </script>
 
 <template>
-  <div class="mx-auto grid grid-cols-3 grid-rows-3 h-[100cqmin] aspect-ratio-square justify-center children:h-fit">
+  <div class="mx-auto h-[100cqmin] aspect-ratio-square items-center justify-center children:h-fit" :class="levelsClass[currentLevel]">
     <Level
       v-for="({ characterStartPos, goalPos, obstacles, spikes }, key) in levelsData.slice(0, currentLevel)"
       :key
