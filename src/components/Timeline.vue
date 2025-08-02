@@ -86,6 +86,7 @@ function rectRectCollision(rect1: Rect, rect2: Rect): boolean {
 }
 
 const timelineContext = {
+  paused,
   sign,
   progress,
   timelineBounding,

@@ -6,16 +6,19 @@ const props = withDefaults(
   defineProps<{
     characterStartPos: RAPIER.Vector
     obstacles?: { x: number, y: number, width: number, height: number }[]
+    spikes?: { x: number, y: number, rotation: string /* a valid css transform rotation string */ }[]
     goalPos: RAPIER.Vector
     timeline: InstanceType<typeof Timeline> | null
   }>(),
   {
     obstacles: () => [],
+    spikes: () => [],
   },
 )
 
 const emit = defineEmits<{
   goal: []
+  spike: []
 }>()
 
 const WIDTH = 2000
@@ -26,6 +29,8 @@ const gravity = new RAPIER.Vector2(0.0, -9.81)
 const world = new RAPIER.World(gravity)
 
 const obstacleColliders = ref(new WeakSet<RAPIER.Collider>())
+const spikeColliders = ref(new WeakSet<RAPIER.Collider>())
+const spikeData = ref(new Map<RAPIER.Collider, { rotation: string }>())
 // Create Ground.
 const bodyDesc = RAPIER.RigidBodyDesc.fixed()
 const body = world.createRigidBody(bodyDesc)
@@ -33,13 +38,13 @@ const colliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1)
 obstacleColliders.value.add(world.createCollider(colliderDesc, body))
 
 // Create Left Wall.
-const leftWallDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(-10.0, 10.0)
+const leftWallDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(-9.9, 10.0)
 const leftWall = world.createRigidBody(leftWallDesc)
 const leftWallColliderDesc = RAPIER.ColliderDesc.cuboid(0.1, 10.0)
 obstacleColliders.value.add(world.createCollider(leftWallColliderDesc, leftWall))
 
 // Create Right Wall.
-const rightWallDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(10.0, 10.0)
+const rightWallDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(9.9, 10.0)
 const rightWall = world.createRigidBody(rightWallDesc)
 const rightWallColliderDesc = RAPIER.ColliderDesc.cuboid(0.1, 10.0)
 obstacleColliders.value.add(world.createCollider(rightWallColliderDesc, rightWall))
@@ -55,6 +60,20 @@ for (const obstacle of props.obstacles) {
   const obstacleBody = world.createRigidBody(obstacleDesc)
   const obstacleColliderDesc = RAPIER.ColliderDesc.cuboid(obstacle.width, obstacle.height)
   obstacleColliders.value.add(world.createCollider(obstacleColliderDesc, obstacleBody))
+}
+
+// Create spikes
+for (const spike of props.spikes) {
+  const spikeDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(spike.x, spike.y)
+  const spikeBody = world.createRigidBody(spikeDesc)
+  // Use smaller circle collider for better gameplay experience (0.3 radius instead of 0.5 for 1x1 visual)
+  const spikeColliderDesc = RAPIER.ColliderDesc.ball(0.3)
+  const spikeCollider = world.createCollider(spikeColliderDesc, spikeBody)
+  spikeCollider.setSensor(true)
+  spikeCollider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS)
+  spikeCollider.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.KINEMATIC_FIXED)
+  spikeColliders.value.add(spikeCollider)
+  spikeData.value.set(spikeCollider, { rotation: spike.rotation })
 }
 
 // Character
@@ -74,9 +93,8 @@ characterController.enableSnapToGround(0.7)
 
 // Goal
 let goalDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(props.goalPos.x, props.goalPos.y)
-let goal = world.createRigidBody(goalDesc)
 let goalColliderDesc = RAPIER.ColliderDesc.cuboid(0.75, 0.75)
-let goalCollider = world.createCollider(goalColliderDesc, goal)
+let goalCollider = world.createCollider(goalColliderDesc, world.createRigidBody(goalDesc))
 goalCollider.setSensor(true)
 // Enable collision events for the goal
 goalCollider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS)
@@ -118,6 +136,32 @@ function updateCharacter() {
   character.setNextKinematicTranslation(newPos)
 }
 
+if (new URLSearchParams(window.location.search).get('debug') != null) {
+  useEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      velocity.x = -speed
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      velocity.x = speed
+    }
+    if (event.key === ' ') {
+      event.preventDefault()
+      if (characterController.computedGrounded()) {
+        velocity.y = jumpForce
+      }
+    }
+  })
+
+  useEventListener('keyup', (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft')
+      velocity.x = 0.0
+    if (event.key === 'ArrowRight')
+      velocity.x = 0.0
+  })
+}
+
 until(() => props.timeline)
   .toBeTruthy()
   .then((timeline) => {
@@ -144,12 +188,17 @@ until(() => props.timeline)
   })
 
 const obstacles = ref<{ x: number, y: number, width: number, height: number, rotation: number }[]>([])
+const spikes = ref<{ x: number, y: number, rotation: string }[]>([])
 const player = ref<{ x: number, y: number, width: number, height: number } | null>(null)
-const goalRef = ref<{ x: number, y: number, radius: number } | null>(null)
+const goal = ref<{ x: number, y: number, radius: number } | null>(null)
+const showRedBackground = ref(false)
+const goalCollected = ref(false)
+const gameRunning = ref(true)
 
 const TARGET_FPS = 144
 const TARGET_FRAME_TIME = 1000 / TARGET_FPS
 const FIXED_TIMESTEP = 1.0 / TARGET_FPS
+const ANIMATION_DURATION = 500 // ms
 let lastFrameTime = 0
 const nextFrameDelay = ref(TARGET_FRAME_TIME)
 
@@ -158,6 +207,10 @@ const { start: scheduleNextFrame } = useTimeoutFn(() => {
 }, nextFrameDelay, { immediate: false })
 
 function gameLoop() {
+  if (!gameRunning.value) {
+    return // Stop the game loop if the game is not running
+  }
+
   const currentTime = performance.now()
 
   if (lastFrameTime === 0) {
@@ -182,15 +235,35 @@ function gameLoop() {
       (collider1 === characterCollider && collider2 === goalCollider)
       || (collider1 === goalCollider && collider2 === characterCollider)
     )) {
-      world.removeCollider(goalCollider, true)
-      emit('goal')
+      gameRunning.value = false
+      animateGoal()
+      goalCollected.value = true
+      setTimeout(() => {
+        world.removeCollider(goalCollider, true)
+        emit('goal')
+      }, ANIMATION_DURATION - 100)
+    }
+
+    // Check for spike collisions
+    if (started && (
+      (collider1 === characterCollider && spikeColliders.value.has(collider2))
+      || (collider2 === characterCollider && spikeColliders.value.has(collider1))
+    )) {
+      gameRunning.value = false
+      // Flash red background
+      showRedBackground.value = true
+      setTimeout(() => {
+        showRedBackground.value = false
+        emit('spike')
+      }, ANIMATION_DURATION)
     }
   })
 
   // Render
   obstacles.value = []
+  spikes.value = []
   player.value = null
-  goalRef.value = null
+  goal.value = null
   world.forEachCollider((collider) => {
     if (obstacleColliders.value.has(collider)) {
       const shape = collider.shape as RAPIER.Cuboid
@@ -210,6 +283,23 @@ function gameLoop() {
         width: width * ZOOM,
         height: height * ZOOM,
         rotation: rotation * (180 / Math.PI), // Convert to degrees for SVG
+      })
+    }
+    else if (spikeColliders.value.has(collider)) {
+      // Render spike as 1x1 triangle
+      const position = collider.translation()
+
+      // Calculate center position in screen coordinates
+      const centerX = position.x * ZOOM + WIDTH / 2
+      const centerY = -position.y * ZOOM + HEIGHT
+
+      // Get rotation from stored spike data
+      const rotation = spikeData.value.get(collider)?.rotation || 'rotate(0deg)'
+
+      spikes.value.push({
+        x: centerX,
+        y: centerY,
+        rotation,
       })
     }
     else if (collider === characterCollider) {
@@ -242,7 +332,7 @@ function gameLoop() {
       const centerX = position.x * ZOOM + WIDTH / 2
       const centerY = -position.y * ZOOM + HEIGHT
 
-      goalRef.value = {
+      goal.value = {
         x: centerX,
         y: centerY,
         radius: radius * ZOOM,
@@ -264,7 +354,6 @@ function initializeGame() {
 initializeGame()
 
 function restart() {
-  // Reset velocity
   velocity.x = 0.0
   velocity.y = 0.0
 
@@ -272,16 +361,37 @@ function restart() {
 
   if (!world.getCollider(goalCollider.handle)) {
     goalDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(props.goalPos.x, props.goalPos.y)
-    goal = world.createRigidBody(goalDesc)
     goalColliderDesc = RAPIER.ColliderDesc.cuboid(0.75, 0.75)
-    goalCollider = world.createCollider(goalColliderDesc, goal)
+    goalCollider = world.createCollider(goalColliderDesc, world.createRigidBody(goalDesc))
     goalCollider.setSensor(true)
     goalCollider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS)
     goalCollider.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.KINEMATIC_FIXED)
   }
 
+  // Reset game state
+  gameRunning.value = true
+  showRedBackground.value = false
+  goalCollected.value = false
+
   // Reset frame timing
   lastFrameTime = 0
+
+  // Resume the game loop
+  scheduleNextFrame()
+}
+
+const goalRef = useTemplateRef('goalRef')
+function animateGoal() {
+  goalRef.value?.animate(
+    [
+      { transform: 'scale(1)', opacity: 1 },
+      { transform: 'scale(100)', opacity: 0 },
+    ],
+    {
+      duration: ANIMATION_DURATION,
+      fill: 'none',
+    },
+  )
 }
 
 defineExpose({
@@ -294,6 +404,37 @@ defineExpose({
     xmlns="http://www.w3.org/2000/svg"
     :viewBox="`0 0 ${WIDTH} ${HEIGHT}`"
   >
+    <!-- Red background flash when hitting spike -->
+    <rect
+      v-if="showRedBackground"
+      :width="WIDTH"
+      :height="HEIGHT"
+      fill="rgba(255, 0, 0, 0.3)"
+      class="animate-pulse animate-duration-500 animate-ease-out"
+    />
+
+    <!-- Goal as green ball -->
+    <circle
+      v-if="goal"
+      ref="goalRef"
+      :cx="goal.x"
+      :cy="goal.y"
+      :transform-origin="`${goal.x} ${goal.y}`"
+      :r="goal.radius"
+      opacity="1"
+      fill="limegreen"
+    />
+
+    <!-- Spikes as red triangles -->
+    <polygon
+      v-for="(spike, index) in spikes"
+      :key="`spike-${index}`"
+      :points="`${spike.x - ZOOM},${spike.y + ZOOM} ${spike.x + ZOOM},${spike.y + ZOOM} ${spike.x},${spike.y - ZOOM}`"
+      :style="{ transform: spike.rotation }"
+      :transform-origin="`${spike.x} ${spike.y}`"
+      fill="red"
+    />
+
     <!-- Cuboid colliders (walls, ground, ceiling, cubes) -->
     <rect
       v-for="(rect, index) in obstacles"
@@ -304,15 +445,6 @@ defineExpose({
       :height="rect.height"
       :transform="`rotate(${rect.rotation} ${rect.x + rect.width / 2} ${rect.y + rect.height / 2})`"
       fill="gray"
-    />
-
-    <!-- Goal as green ball -->
-    <circle
-      v-if="goalRef"
-      :cx="goalRef.x"
-      :cy="goalRef.y"
-      :r="goalRef.radius"
-      fill="limegreen"
     />
 
     <!-- Player character as blue capsule -->

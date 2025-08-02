@@ -6,10 +6,10 @@
 - Generated from the [`vitesse-lite`](https://github.com/antfu-collective/vitesse-lite) template
 
 - TODO
-  - [ ] level design
+  - [ ] level design (WIP)
   - [ ] light mode lol
-  - [ ] spikes
-  - [ ] show multiple levels at once
-  - [ ] timeline controls
+  - [x] spikes
+  - [x] show multiple levels at once
+  - [x] timeline controls
   - [ ] level editor?
   - [ ] submit game
