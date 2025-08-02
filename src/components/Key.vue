@@ -46,7 +46,7 @@ function dragStart(event: PointerEvent) {
   <div
     v-if="dragging"
     ref="dragEl"
-    class="rounded-xl bg-gray-200 fixed touch-none dark:bg-white/50 hover:bg-gray-300 dark:hover:bg-white/80"
+    class="rounded-xl bg-gray-200 fixed touch-none dark:bg-white/50 hover:bg-gray-300/50 dark:hover:bg-white/80"
     :style="{ left: `${x - offset.x}px`, top: `${y - offset.y}px` }"
   >
     <div class="text-gray-700 h-12 w-12 cursor-grab dark:text-white" :class="icon" />

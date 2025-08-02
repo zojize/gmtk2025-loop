@@ -170,7 +170,7 @@ defineExpose({
           :y="preview.track === 0 ? 0 : 5"
           :width="preview.width"
           :height="5"
-          class="fill-gray-400 dark:fill-gray-600"
+          class="fill-gray-200 dark:fill-gray-600"
           rx="1"
           ry="1"
         />
