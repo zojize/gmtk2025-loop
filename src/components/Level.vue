@@ -415,7 +415,7 @@ defineExpose({
 
     <!-- Goal as green ball -->
     <circle
-      v-if="goal"
+      v-if="goal && !goalCollected"
       ref="goalRef"
       :cx="goal.x"
       :cy="goal.y"

@@ -42,14 +42,6 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
   {
     characterStartPos: { x: -8, y: 1.25 },
     spikes: [
-      { x: -6, y: 1, rotation: spikeDirections.up },
-      { x: 6, y: 1, rotation: spikeDirections.right },
-    ],
-    goalPos: { x: 8, y: 1.25 },
-  },
-  {
-    characterStartPos: { x: -8, y: 1.25 },
-    spikes: [
       { x: -5, y: 1, rotation: spikeDirections.up },
       { x: 5, y: 1, rotation: spikeDirections.up },
     ],
