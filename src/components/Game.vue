@@ -4,14 +4,16 @@ import type Timeline from './Timeline.vue'
 
 const timeline = useTemplateRef<InstanceType<typeof Timeline>>('timeline')
 
-const currentLevel = ref(1)
+const searchParams = new URLSearchParams(window.location.search)
+const debug = searchParams.get('debug') != null
+const currentLevel = ref(debug && searchParams.get('level') ? +searchParams.get('level')! : 1)
 const collectedGoals = ref(0)
-const spikeDirections = {
-  up: 'rotate(0deg)',
-  right: 'rotate(90deg)',
-  down: 'rotate(180deg)',
-  left: 'rotate(270deg)',
-}
+// const spikeDirections = {
+//   up: 'rotate(0deg)',
+//   right: 'rotate(90deg)',
+//   down: 'rotate(180deg)',
+//   left: 'rotate(270deg)',
+// }
 const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
   {
     characterStartPos: { x: -8, y: 1.25 },
@@ -27,8 +29,8 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
   {
     characterStartPos: { x: -8, y: 1.25 },
     obstacles: [
-      { x: -6, y: 1, width: 1, height: 1 },
-      { x: 6, y: 1, width: 1, height: 1 },
+      { x: -5, y: 1, width: 1, height: 1 },
+      { x: 5, y: 1, width: 1, height: 1 },
     ],
     goalPos: { x: 8, y: 1.25 },
   },
@@ -40,44 +42,55 @@ const levelsData: Omit<InstanceType<(typeof Level)>['$props'], 'timeline'>[] = [
     goalPos: { x: -8, y: 1.25 },
   },
   {
-    characterStartPos: { x: -8, y: 1.25 },
-    spikes: [
-      { x: -5, y: 1, rotation: spikeDirections.up },
-      { x: 5, y: 1, rotation: spikeDirections.up },
+    characterStartPos: { x: 8, y: 17.25 },
+    obstacles: [
+      { x: 7, y: 15, width: 3, height: 1 },
+      { x: -4, y: 2, width: 1, height: 3 },
+      { x: -2, y: 4, width: 3, height: 1 },
+      { x: 0, y: 6, width: 1, height: 3 },
+      { x: 2, y: 8, width: 3, height: 1 },
     ],
     goalPos: { x: 8, y: 1.25 },
   },
   {
-    characterStartPos: { x: -8, y: 1.25 },
-    spikes: [
-      { x: -5, y: 1, rotation: spikeDirections.up },
-      { x: 5, y: 1, rotation: spikeDirections.up },
+    characterStartPos: { x: -8, y: 12 },
+    obstacles: [
+      { x: -8, y: 8, width: 2, height: 2 },
+      { x: -1, y: 2, width: 2, height: 2 },
+      { x: 8, y: 8, width: 2, height: 1 },
     ],
-    goalPos: { x: 8, y: 1.25 },
+    goalPos: { x: 8, y: 10 },
   },
   {
-    characterStartPos: { x: -8, y: 1.25 },
-    spikes: [
-      { x: -5, y: 1, rotation: spikeDirections.up },
-      { x: 5, y: 1, rotation: spikeDirections.up },
+    characterStartPos: { x: -8, y: 12.25 },
+    obstacles: [
+      { x: -6, y: 2, width: 1, height: 3 },
+      { x: -8, y: 4, width: 3, height: 1 },
+      { x: -8, y: 10, width: 14, height: 1 },
+      { x: 0, y: 7, width: 1, height: 3 },
+      { x: 6, y: 2, width: 1, height: 3 },
+      { x: 8, y: 4, width: 3, height: 1 },
     ],
-    goalPos: { x: 8, y: 1.25 },
+    goalPos: { x: -8, y: 6.25 },
   },
   {
-    characterStartPos: { x: -8, y: 1.25 },
-    spikes: [
-      { x: -5, y: 1, rotation: spikeDirections.up },
-      { x: 5, y: 1, rotation: spikeDirections.up },
+    characterStartPos: { x: 0, y: 1.25 },
+    obstacles: [
+      { x: 1, y: 4, width: 3, height: 1 },
+      { x: -1, y: 10, width: 3, height: 1 },
     ],
-    goalPos: { x: 8, y: 1.25 },
+    goalPos: { x: -1, y: 14.5 },
   },
   {
-    characterStartPos: { x: -8, y: 1.25 },
-    spikes: [
-      { x: -5, y: 1, rotation: spikeDirections.up },
-      { x: 5, y: 1, rotation: spikeDirections.up },
+    characterStartPos: { x: 9, y: 1.25 },
+    obstacles: [
+      { x: -4, y: 3, width: 2, height: 3 },
+      { x: -8, y: 9, width: 2, height: 3 },
+      { x: 4, y: 3, width: 1, height: 5 },
+      { x: 6, y: 4, width: 2, height: 1 },
+      { x: 4, y: 16, width: 1, height: 5 },
     ],
-    goalPos: { x: 8, y: 1.25 },
+    goalPos: { x: -1, y: 14.5 },
   },
 ]
 

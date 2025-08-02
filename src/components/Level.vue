@@ -105,9 +105,11 @@ goalCollider.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.KINEMATIC_FIXED
 // Event queue for collision detection
 const eventQueue = new RAPIER.EventQueue(true)
 
-const speed = 0.15
-const jumpForce = 0.4
-const gravityForce = 0.015
+const searchParams = new URLSearchParams(window.location.search)
+const debug = searchParams.get('debug') != null
+const speed = debug && searchParams.get('speed') ? +searchParams.get('speed')! : 0.15
+const jumpForce = debug && searchParams.get('jump') ? +searchParams.get('jump')! : 0.4
+const gravityForce = debug && searchParams.get('gravity') ? +searchParams.get('gravity')! : 0.015
 const velocity = { x: 0.0, y: 0.0 }
 const inputEnabled = ref(true)
 
@@ -138,7 +140,7 @@ function updateCharacter() {
   character.setNextKinematicTranslation(newPos)
 }
 
-if (new URLSearchParams(window.location.search).get('debug') != null) {
+if (debug) {
   useEventListener('keydown', (event: KeyboardEvent) => {
     if (!inputEnabled.value)
       return
