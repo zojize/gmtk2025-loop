@@ -183,17 +183,17 @@ defineExpose({
 
 <template>
   <div class="flex flex-row gap-2 justify-end">
-    <button v-if="paused" class="icon-btn" alt="Delete All Items" @click="deleteItems">
+    <button v-if="paused" class="icon-btn" title="Delete All Items" @click="deleteItems">
       <div class="i-carbon-trash-can" />
     </button>
-    <button class="icon-btn" :alt="paused ? 'Play' : 'Pause'" @click="paused ? play() : pause()">
+    <button class="icon-btn" :title="paused ? 'Play' : 'Pause'" @click="paused ? play() : pause()">
       <div :class="paused ? 'i-carbon-play-filled-alt' : 'i-carbon-pause-filled'" />
     </button>
-    <button class="icon-btn" alt="Restart" @click="restart">
+    <button class="icon-btn" title="Restart" @click="restart">
       <div class="i-carbon-restart" />
     </button>
   </div>
-  <div class="mt-2 p-2 border border-blue-400 bg-white max-h-48 dark:border-blue-600 dark:bg-gray-900">
+  <div class="mx-4 mt-2 p-2 border border-blue-400 bg-white max-h-48 dark:border-blue-600 dark:bg-gray-900">
     <svg ref="timelineEl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" class="h-full w-full">
       <symbol id="carbon-arrow-left" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="m14 26l1.41-1.41L7.83 17H28v-2H7.83l7.58-7.59L14 6L4 16z" /></symbol>
       <symbol id="carbon-arrow-up" viewBox="0 0 32 32"><!-- Icon from Carbon by IBM - undefined --><path fill="currentColor" d="M16 4L6 14l1.41 1.41L15 7.83V28h2V7.83l7.59 7.58L26 14z" /></symbol>

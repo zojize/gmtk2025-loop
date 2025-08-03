@@ -15,6 +15,7 @@
   "dependencies": {
     "@dimforge/rapier2d": "catalog:frontend",
     "@vueuse/core": "catalog:frontend",
+    "canvas-confetti": "catalog:frontend",
     "lz-string": "catalog:frontend",
     "vite-plugin-wasm": "catalog:build",
     "vue": "catalog:frontend"
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
     "@iconify-json/carbon": "catalog:build",
+    "@types/canvas-confetti": "catalog:dev",
     "@types/node": "catalog:dev",
     "@unocss/eslint-plugin": "catalog:dev",
     "@vitejs/plugin-vue": "catalog:build",
