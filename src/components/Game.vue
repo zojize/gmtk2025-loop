@@ -153,5 +153,5 @@ const levelsClass = [
       @spike="resetLevels"
     />
   </div>
-  <Timeline ref="timeline" :duration="2000" />
+  <Timeline ref="timeline" :duration="2000" @restart="resetLevels" />
 </template>

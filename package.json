@@ -15,6 +15,7 @@
   "dependencies": {
     "@dimforge/rapier2d": "catalog:frontend",
     "@vueuse/core": "catalog:frontend",
+    "lz-string": "catalog:frontend",
     "vite-plugin-wasm": "catalog:build",
     "vue": "catalog:frontend"
   },

@@ -8,6 +8,9 @@ const props = defineProps<{
 const { data, context } = props
 
 function onPointerDownLeft() {
+  if (!context.paused.value || context.accumulated.value > 0) {
+    return
+  }
   const initialX = data.x
   const initialWidth = data.width
   const minX = context.timelineItems.value
@@ -36,6 +39,9 @@ function onPointerDownLeft() {
 }
 
 function onPointerDownRight() {
+  if (!context.paused.value || context.accumulated.value > 0) {
+    return
+  }
   const maxWidth = context.timelineItems.value
     .reduce((acc, item) => {
       if (item.track === data.track) {
@@ -56,6 +62,9 @@ function onPointerDownRight() {
 }
 
 function onGrab(event: PointerEvent) {
+  if (!context.paused.value || context.accumulated.value > 0) {
+    return
+  }
   const timelineBounding = context.timelineBounding
   const offsetX = (event.clientX - (timelineBounding.x.value + (data.x / 100) * timelineBounding.width.value)) / timelineBounding.width.value * 100
   const initialWidth = data.width
@@ -87,6 +96,9 @@ function onGrab(event: PointerEvent) {
 }
 
 function removeSelf() {
+  if (!context.paused.value || context.accumulated.value > 0) {
+    return
+  }
   const index = context.timelineItems.value.indexOf(data)
   if (index !== -1) {
     context.timelineItems.value.splice(index, 1)

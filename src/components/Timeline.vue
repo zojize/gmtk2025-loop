@@ -1,6 +1,14 @@
 <script setup lang="ts">
+import { decompressFromEncodedURIComponent as decode, compressToEncodedURIComponent as encode } from 'lz-string'
+
 const { duration } = defineProps<{
   duration: number
+}>()
+
+const emit = defineEmits<{
+  play: []
+  pause: []
+  restart: []
 }>()
 
 const paused = ref(true)
@@ -31,7 +39,21 @@ const preview = ref<{
 type Rect = Omit<DOMRect, 'top' | 'right' | 'bottom' | 'left' | 'toJSON'>
 
 const minWidth = ref(-1)
-const timelineItems = ref<(NonNullable<typeof preview.value> & { active: boolean })[]>([])
+const searchParams = new URLSearchParams(window.location.search)
+let itemsFromQuery: (NonNullable<typeof preview.value> & { active: boolean })[]
+try {
+  const timelineStr = searchParams.get('timeline')
+  itemsFromQuery = timelineStr ? JSON.parse(decode(timelineStr)) : []
+}
+catch {
+  itemsFromQuery = []
+}
+const timelineItems = ref<(NonNullable<typeof preview.value> & { active: boolean })[]>(itemsFromQuery ?? [])
+watch(timelineItems, (items) => {
+  const searchParams = new URLSearchParams(window.location.search)
+  searchParams.set('timeline', encode(JSON.stringify(items)))
+  window.history.replaceState({}, '', `?${searchParams.toString()}`)
+}, { deep: true })
 function onDrag(dragBounding: Rect, icon: string) {
   if (rectRectCollision(dragBounding, {
     x: timelineBounding.x.value,
@@ -70,6 +92,11 @@ function onDrag(dragBounding: Rect, icon: string) {
 }
 
 function onDragEnd() {
+  if (!paused.value || accumulated.value > 0) {
+    preview.value = undefined
+    // TODO show a toast or something
+    return
+  }
   if (preview.value) {
     timelineItems.value.push({ ...preview.value, active: false })
   }
@@ -92,6 +119,7 @@ const timelineContext = {
   timelineBounding,
   timelineItems,
   minWidth,
+  accumulated,
 }
 export type TimelineContext = typeof timelineContext
 
@@ -125,15 +153,23 @@ const keys = computed(() => {
 
 function play() {
   paused.value = false
+  emit('play')
 }
 
 function pause() {
   paused.value = true
+  emit('pause')
 }
 
 function restart() {
   accumulated.value = 0
   progress.value = 0
+  paused.value = true
+  emit('restart')
+}
+
+function deleteItems() {
+  timelineItems.value = []
 }
 
 defineExpose({
@@ -147,13 +183,13 @@ defineExpose({
 
 <template>
   <div class="flex flex-row gap-2 justify-end">
-    <button class="icon-btn" @click="play">
-      <div class="i-carbon-play-filled-alt" />
+    <button v-if="paused" class="icon-btn" alt="Delete All Items" @click="deleteItems">
+      <div class="i-carbon-trash-can" />
     </button>
-    <button class="icon-btn" :disabled="paused" @click="pause">
-      <div class="i-carbon-pause-filled" />
+    <button class="icon-btn" :alt="paused ? 'Play' : 'Pause'" @click="paused ? play() : pause()">
+      <div :class="paused ? 'i-carbon-play-filled-alt' : 'i-carbon-pause-filled'" />
     </button>
-    <button class="icon-btn" @click="restart">
+    <button class="icon-btn" alt="Restart" @click="restart">
       <div class="i-carbon-restart" />
     </button>
   </div>
