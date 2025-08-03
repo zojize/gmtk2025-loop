@@ -114,10 +114,11 @@ whenever(() => collectedGoals.value === currentLevel.value, () => {
   resetLevels()
 })
 
-function resetLevels() {
+function resetLevels(restartTimeline: boolean = true) {
   collectedGoals.value = 0
-  timeline.value!.restart()
-  timeline.value!.pause()
+  if (restartTimeline) {
+    timeline.value!.restart()
+  }
   levels.value!.forEach((level) => {
     level!.restart()
   })
@@ -153,5 +154,5 @@ const levelsClass = [
       @spike="resetLevels"
     />
   </div>
-  <Timeline ref="timeline" :duration="2000" @restart="resetLevels" />
+  <Timeline ref="timeline" :duration="2000" @restart="resetLevels(false)" />
 </template>
