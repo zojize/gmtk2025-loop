@@ -34,6 +34,9 @@ catalogs:
     '@antfu/eslint-config':
       specifier: ^4.19.0
       version: 4.19.0
+    '@types/canvas-confetti':
+      specifier: ^1.9.0
+      version: 1.9.0
     '@types/node':
       specifier: ^22.17.0
       version: 22.17.0
@@ -77,6 +80,9 @@ catalogs:
     '@vueuse/core':
       specifier: ^13.6.0
       version: 13.6.0
+    canvas-confetti:
+      specifier: ^1.9.3
+      version: 1.9.3
     lz-string:
       specifier: ^1.5.0
       version: 1.5.0
@@ -99,7 +105,7 @@ importers:
         specifier: catalog:frontend
         version: 13.6.0(vue@3.5.18(typescript@5.9.2))
       canvas-confetti:
-        specifier: ^1.9.3
+        specifier: catalog:frontend
         version: 1.9.3
       lz-string:
         specifier: catalog:frontend
@@ -118,7 +124,7 @@ importers:
         specifier: catalog:build
         version: 1.2.11
       '@types/canvas-confetti':
-        specifier: ^1.9.0
+        specifier: catalog:dev
         version: 1.9.0
       '@types/node':
         specifier: catalog:dev
