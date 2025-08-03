@@ -212,7 +212,7 @@ const ANIMATION_DURATION = 500 // ms
 let lastFrameTime = 0
 const nextFrameDelay = ref(TARGET_FRAME_TIME)
 
-const { start: scheduleNextFrame } = useTimeoutFn(() => {
+const { start: scheduleNextFrame, stop: stopNextFrame } = useTimeoutFn(() => {
   gameLoop()
 }, nextFrameDelay, { immediate: false })
 
@@ -260,6 +260,7 @@ function gameLoop() {
       showRedBackground.value = true
       setTimeout(() => {
         showRedBackground.value = false
+        stopNextFrame()
         emit('spike')
       }, ANIMATION_DURATION)
     }
