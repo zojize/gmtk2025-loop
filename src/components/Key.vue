@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-const { icon } = defineProps<{
+const { icon, disabled = false } = defineProps<{
   icon: string
+  disabled?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -16,6 +17,8 @@ const bounding = useElementBounding(dragEl)
 
 const offset = reactive({ x: 0, y: 0 })
 function dragStart(event: PointerEvent) {
+  if (disabled)
+    return
   dragging.value = true
   offset.x = event.offsetX
   offset.y = event.offsetY

@@ -169,6 +169,9 @@ function restart() {
 }
 
 function deleteItems() {
+  if (accumulated.value > 0) {
+    return
+  }
   timelineItems.value = []
 }
 
@@ -182,7 +185,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex flex-row gap-2 justify-end">
+  <div class="mt-2 flex flex-row gap-2 justify-end">
     <button v-if="paused" class="icon-btn" title="Delete All Items" @click="deleteItems">
       <div class="i-carbon-trash-can" />
     </button>

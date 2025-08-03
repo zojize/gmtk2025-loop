@@ -209,10 +209,10 @@ const levelsClass = [
       <!-- Game Logo/Title -->
       <div class="mb-2">
         <h1 class="text-8xl text-transparent font-black mb-4 from-yellow-300 to-orange-400 bg-linear-to-r bg-clip-text drop-shadow-lg dark:from-cyan-300 dark:to-blue-400">
-          LOOP
+          A GAME THAT LOOPS
         </h1>
         <p class="text-xl text-white/90 mx-auto max-w-md dark:text-cyan-100/90">
-          A GMTK 2025 Game Jam entry
+          GMTK 2025 Game Jam entry
         </p>
         <p class="text-xl text-white/1 mx-auto max-w-md dark:text-cyan-100/1">
           What happens when webdev makes a game
@@ -220,16 +220,12 @@ const levelsClass = [
       </div>
 
       <!-- Menu Buttons -->
-      <div class="flex flex-col gap-6">
-        <button
-          class="group text-3xl text-white font-bold px-12 py-6 rounded-full cursor-pointer transition-all duration-300 from-green-500 to-emerald-600 bg-linear-to-r hover:shadow-2xl hover:shadow-green-500/50 dark:from-emerald-400 dark:to-green-500 hover:-translate-y-2"
-          @click="startGame"
-        >
-          <span class="flex gap-3 items-center justify-center">
-            PLAY
-          </span>
-        </button>
-      </div>
+      <button
+        class="text-3xl text-white font-bold px-12 py-6 rounded-full cursor-pointer transition-all duration-300 from-green-500 to-emerald-600 bg-linear-to-r hover:shadow-2xl hover:shadow-green-500/50 dark:from-emerald-400 dark:to-green-500 hover:-translate-y-2"
+        @click="startGame"
+      >
+        PLAY
+      </button>
 
       <!-- Decorative game elements -->
       <svg class="h-16 w-16 left-8 top-8 absolute animate-pulse" viewBox="0 0 100 100">
@@ -242,12 +238,12 @@ const levelsClass = [
         <circle cx="50" cy="50" r="35" class="fill-green-500 dark:fill-green-400" />
       </svg>
 
-      <svg class="h-20 w-20 bottom-12 left-16 absolute animate-bounce" style="animation-delay: 1s;" viewBox="0 0 100 100">
+      <svg class="h-20 w-20 bottom-12 left-8 absolute animate-bounce" style="animation-delay: 1s;" viewBox="0 0 100 100">
         <!-- Blue player capsule -->
         <rect x="30" y="20" width="40" height="60" rx="20" ry="20" class="fill-blue-400 dark:fill-blue-300" />
       </svg>
 
-      <svg class="h-14 w-14 bottom-12 right-16 absolute" style="animation-delay: 2s;" viewBox="0 0 100 100">
+      <svg class="h-14 w-14 bottom-12 right-8 absolute" style="animation-delay: 2s;" viewBox="0 0 100 100">
         <!-- Gray wall rectangle -->
         <rect x="20" y="20" width="60" height="60" class="fill-gray-600 dark:fill-gray-400" />
       </svg>
