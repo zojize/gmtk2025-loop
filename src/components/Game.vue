@@ -174,14 +174,9 @@ function startGame() {
   gameStarted.value = true
 }
 
-async function copySolution() {
-  try {
-    await navigator.clipboard.writeText(window.location.href)
-    // You could add a toast notification here if needed
-  }
-  catch (err) {
-    console.error('Failed to copy solution URL:', err)
-  }
+const { copy } = useClipboard()
+function share() {
+  copy(`https://a-game-that-loops.netlify.app/${window.location.search}`)
 }
 
 const levelsClass = [
@@ -274,9 +269,9 @@ const levelsClass = [
         </button>
         <button
           class="text-lg text-gray-800 font-semibold px-6 py-3 rounded-full bg-white/95 cursor-pointer transition-all dark:text-cyan-100 dark:border dark:border-cyan-400/50 dark:bg-white/10 hover:bg-white hover:shadow-lg dark:hover:border-cyan-400/70 dark:hover:bg-white/20"
-          @click="copySolution"
+          @click="share"
         >
-          📋 Copy Solution URL
+          Share Solution
         </button>
       </div>
     </div>

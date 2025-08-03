@@ -189,8 +189,8 @@ defineExpose({
     <button v-if="paused" class="icon-btn" title="Delete All Items" @click="deleteItems">
       <div class="i-carbon-trash-can" />
     </button>
-    <button class="icon-btn" :title="paused ? 'Play' : 'Pause'" @click="paused ? play() : pause()">
-      <div :class="paused ? 'i-carbon-play-filled-alt' : 'i-carbon-pause-filled'" />
+    <button class="icon-btn" title="Play" :disabled="!paused" @click="play">
+      <div class="i-carbon-play-filled-alt" />
     </button>
     <button class="icon-btn" title="Restart" @click="restart">
       <div class="i-carbon-restart" />

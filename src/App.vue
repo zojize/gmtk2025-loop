@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 const { copy } = useClipboard()
-
-const helpDialog = useTemplateRef<HTMLDialogElement>('helpDialog')
-
 function share() {
   copy(`https://a-game-that-loops.netlify.app/${window.location.search}`)
 }
 
+const helpDialog = useTemplateRef<HTMLDialogElement>('helpDialog')
 function toggleHelp() {
   if (helpDialog.value?.matches(':popover-open')) {
     helpDialog.value.hidePopover()
