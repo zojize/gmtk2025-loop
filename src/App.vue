@@ -4,7 +4,7 @@ const { copy } = useClipboard()
 const helpDialog = useTemplateRef<HTMLDialogElement>('helpDialog')
 
 function share() {
-  copy(window.location.href)
+  copy(`https://a-game-that-loops.netlify.app/${window.location.search}`)
 }
 
 function toggleHelp() {
@@ -72,7 +72,7 @@ function toggleHelp() {
       title="GitHub"
     />
   </nav>
-  <main class="p-2 flex flex-col h-screen w-screen justify-center">
+  <main class="p-2 pt-6 flex flex-col h-screen w-screen justify-center">
     <Game />
   </main>
 </template>

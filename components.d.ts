@@ -11,8 +11,6 @@ declare module 'vue' {
     Game: typeof import('./src/components/Game.vue')['default']
     Key: typeof import('./src/components/Key.vue')['default']
     Level: typeof import('./src/components/Level.vue')['default']
-    RouterLink: typeof import('vue-router')['RouterLink']
-    RouterView: typeof import('vue-router')['RouterView']
     Timeline: typeof import('./src/components/Timeline.vue')['default']
     TimelineItem: typeof import('./src/components/TimelineItem.vue')['default']
   }

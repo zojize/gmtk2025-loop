@@ -7,6 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import VueMacros from 'unplugin-vue-macros/vite'
 import { defineConfig } from 'vite'
+import { viteSingleFile } from 'vite-plugin-singlefile'
 import Wasm from 'vite-plugin-wasm'
 
 export default defineConfig({
@@ -56,6 +57,8 @@ export default defineConfig({
 
     // https://github.com/Menci/vite-plugin-wasm
     Wasm(),
+
+    viteSingleFile(),
   ],
 
   // https://github.com/vitest-dev/vitest
