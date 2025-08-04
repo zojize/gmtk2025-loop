@@ -12,4 +12,4 @@
   - [x] show multiple levels at once
   - [x] timeline controls
   - [ ] level editor?
-  - [ ] submit game
+  - [x] submit game
